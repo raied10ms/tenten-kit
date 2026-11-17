@@ -15,7 +15,11 @@ It's the same character and rules as ReelMath (`apps/reelmath/engine/brand.js`):
 - it flies in low, short arcs and bobs when idle; its eyes glow while it "talks"
 - `?` = thinking, `!` = wow, squint + blush = happy
 
-Open `index.html` for the playground: every action is a button, and the full API is on the page.
+**Live:** https://tenten-kit.pages.dev (playground) · [slides](https://tenten-kit.pages.dev/examples/slides) · [video overlay](https://tenten-kit.pages.dev/examples/video-overlay) · [minimal](https://tenten-kit.pages.dev/examples/minimal)
+
+Load it straight from the site: `<script src="https://tenten-kit.pages.dev/tenten.bundle.js"></script>`
+
+Or open `index.html` locally for the playground: every action is a button, and the full API is on the page.
 
 ## 1. Web page / HTML slides (30 seconds)
 
@@ -75,6 +79,7 @@ Sounds: `assets/sfx/*.mp3` (web) and `assets/sfx-wav/*.wav` (editors): pop, whoo
 npm i                              # playwright (only for the tools)
 node tools/build.mjs               # tenten.js + assets/sfx → tenten.bundle.js
 node tools/render-clips.mjs        # every clip + still (or: node tools/render-clips.mjs happy stills)
+bash tools/deploy.sh               # publish to https://tenten-kit.pages.dev (Cloudflare Pages)
 ```
 Add a new clip by adding one line to `CLIPS` in `tools/render-clips.mjs`. The clip is just a few TenTen API calls, rendered frame by frame.
 
