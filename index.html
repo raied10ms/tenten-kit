@@ -34,6 +34,12 @@
   .stills { display: flex; flex-wrap: wrap; gap: 10px; }
   .stills figure { margin: 0; text-align: center; font-size: 12px; color: var(--mut); }
   .stills img { width: 92px; height: 92px; object-fit: contain; background: repeating-conic-gradient(#f1ede8 0 25%, #fff 0 50%) 0 0/16px 16px; border-radius: 12px; }
+  .prompt { grid-column: 1 / -1; }
+  .prompt .steps { margin: 0 0 8px; padding-left: 22px; }
+  .prompt .note { font-size: 13px; color: var(--mut); background: #fff6e8; border-radius: 10px; padding: 8px 12px; }
+  .copybar { display: flex; gap: 12px; align-items: center; margin: 12px 0 8px; }
+  #copied { color: #16a34a; font-weight: 600; }
+  #promptText { width: 100%; height: 420px; font: 13px/1.55 ui-monospace, Menlo, monospace; border: 1px solid #e3ddd6; border-radius: 12px; padding: 14px 16px; background: #fdfbf8; resize: vertical; }
 </style>
 </head>
 <body>
@@ -88,6 +94,7 @@
       <tr><td>Over a video (web)</td><td><a href="examples/video-overlay.html">examples/video-overlay.html</a>: <code>tt.sync(video, cues)</code> fires actions at video timestamps and keeps up with seeking.</td></tr>
       <tr><td>Video editors</td><td>Transparent clips in <code>clips/</code>: <b>.mov</b> (ProRes 4444, Premiere / Final Cut / CapCut / Keynote / PowerPoint), <b>.webm</b> (web), <b>.gif</b> (Google Slides / Canva).</td></tr>
       <tr><td>Static designs</td><td><code>assets/png/</code> (transparent 512 px) and <code>assets/svg/</code> for every mood.</td></tr>
+      <tr><td>No coding</td><td><a href="#prompt">Section ৫</a>: a ready-to-copy prompt for ChatGPT, Claude or Gemini</td></tr>
       <tr><td>Minimal embed</td><td><a href="examples/minimal.html">examples/minimal.html</a></td></tr>
     </table>
   </section>
@@ -123,6 +130,51 @@
     </table>
     <div class="stills" id="stills"></div>
   </section>
+  <section class="prompt" id="prompt">
+    <h2>৫. কোডিং ছাড়াই: ChatGPT / Claude / Gemini-এর জন্য রেডি প্রম্পট</h2>
+    <ol class="steps">
+      <li>নিচের <b>Copy</b> বাটনে চাপো।</li>
+      <li>ChatGPT, Claude বা Gemini-তে পেস্ট করো। শেষের <b>[ ]</b> অংশে লেখো তুমি কী চাও আর তোমার কনটেন্ট দাও।</li>
+      <li>AI একটা কোড দেবে। সেটা কপি করে Notepad-এ (Mac-এ TextEdit → Format → Make Plain Text) পেস্ট করো, তারপর <code>lesson.html</code> নামে সেভ করো।</li>
+      <li>ফাইলটা Chrome-এ খোলো। একবার ক্লিক করো, তাহলে সাউন্ডও চালু হবে।</li>
+    </ol>
+    <p class="note">AI চ্যাটের ভেতরের প্রিভিউতে টেনটেন অনেক সময় দেখা যায় না, কারণ সেখানে বাইরের ফাইল লোড হতে দেয় না। ফাইলটা সেভ করে Chrome-এ খুললে ঠিকমতো চলবে।</p>
+    <div class="copybar"><button class="main" id="copyBtn" onclick="copyPrompt()">Copy prompt</button><span id="copied"></span></div>
+    <textarea id="promptText" readonly spellcheck="false">Make me ONE complete HTML file that I can save and open in Chrome. It should include TenTen, the floating animated character of 10 Minute School.
+
+HOW TO ADD TENTEN (use exactly this, don't recreate the character yourself):
+1. Put this line just before </body>:
+   <script src="https://tenten-kit.pages.dev/tenten.bundle.js"></script>
+2. Then create it:  const tt = TenTen.create({ size: 140 });
+3. Control it with these commands. They run one after another in order:
+   tt.enter()                          fly in
+   tt.say('text')                      speech bubble (Bangla is fine)
+   tt.point('#someId', { say: 'text' })  fly next to an element, ring it, and talk
+   tt.flyTo({ x: '80%', y: '70%' })     move to a spot on the screen
+   tt.think()  tt.wow()  tt.happy()  tt.sleepy()      moods
+   tt.celebrate()  tt.hop(2)  tt.nod()  tt.shake()     gestures
+   tt.look('left' | 'right' | 'up')
+   tt.exit()                           fly away
+   tt.interrupt()                      call this every time the slide changes
+
+RULES:
+- TenTen has NO mouth. Never draw, add or describe a mouth. Don't change how it looks.
+- It must never just disappear. Use tt.exit() to make it leave.
+- Keep it beside the content, never covering text. Use point() for this.
+- Browsers only play sound after a click, so start with a big "শুরু করো" (Start) button that hides itself and starts the show.
+- Give every important element a unique id, so TenTen can point() at it.
+
+DESIGN:
+- Bangla text in the "Hind Siliguri" font (Google Fonts). Clean, colourful, easy for students to read.
+- If it's a lesson: make 16:9 slides that change with the arrow keys and with clicks. Each slide has its own TenTen actions: greet, point at the key term, ask a question (think), react to the answer (happy or celebrate).
+- Return the WHOLE file in ONE code block, with nothing left out.
+
+WHAT I WANT:
+[Describe it here, e.g. "a 5-slide lesson on photosynthesis for Class 8, in Bangla, where TenTen greets the students, explains each step, asks one quiz question and celebrates the answer"]
+
+MY CONTENT:
+[Paste your text, bullet points or notes here]</textarea>
+  </section>
 </main>
 <script src="tenten.bundle.js"></script>
 <script>
@@ -130,6 +182,11 @@
   tt.enter().then(() => tt.say('হাই! আমাকে টেনে সরাতে পারো, ক্লিক করলে লাফাই', { dur: 3.2 }));
   const moods = ['idle', 'happy', 'think', 'wow', 'sleepy', 'talk', 'look-left', 'look-right'];
   stills.innerHTML = moods.map((m) => `<figure><img src="assets/png/tenten-${m}.png" alt="${m}" onerror="this.parentNode.remove()"><figcaption>${m}</figcaption></figure>`).join('');
+  function copyPrompt() {
+    const t = document.getElementById('promptText');
+    const done = () => { copied.textContent = 'কপি হয়েছে ✓ এবার ChatGPT, Claude বা Gemini-তে পেস্ট করো'; setTimeout(() => (copied.textContent = ''), 4000); tt.happy(1.2); };
+    (navigator.clipboard ? navigator.clipboard.writeText(t.value) : Promise.reject()).then(done).catch(() => { t.select(); document.execCommand('copy'); done(); });
+  }
 </script>
 </body>
 </html>
