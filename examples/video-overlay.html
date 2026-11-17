@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>TenTen — over a video</title>
+<style>
+  body { margin: 0; background: #111; color: #ddd; font: 15px system-ui; display: grid; place-items: center; min-height: 100vh; }
+  .wrap { position: relative; width: min(96vw, 960px); }      /* TenTen lives inside this box, on top of the video */
+  video { width: 100%; display: block; border-radius: 12px; }
+  p { max-width: 960px; }
+  code { background: #222; padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div>
+  <div class="wrap" id="wrap">
+    <video id="v" src="sample.mp4" controls playsinline></video>
+  </div>
+  <p>Press play. TenTen's cues follow <code>video.currentTime</code>, so pausing, seeking and scrubbing back all work. Positions are percentages of the video box, so it scales with the player.</p>
+</div>
+<script src="../tenten.bundle.js"></script>
+<script>
+  const tt = TenTen.create({ parent: '#wrap', size: 110, side: 'right' });
+  tt.sync('#v', [
+    { t: 0.5,  do: ['enter', { to: { x: '88%', y: '30%' } }] },
+    { t: 2.0,  do: ['say', 'চলো মাইটোকন্ড্রিয়া আঁকি!'] },
+    { t: 8.0,  do: ['say', 'আগে পেন্সিলে হালকা করে প্ল্যান'] },
+    { t: 16.0, do: ['think', 2] },
+    { t: 18.5, do: ['say', 'বিন্দুগুলোই ক্রিস্টির জায়গা'] },
+    { t: 24.0, do: ['say', 'এবার কলমে গাঢ় করে', { mood: 'happy' }] },
+    { t: 33.0, do: ['wow', 1.5] },
+    { t: 37.5, do: ['exit'] },
+  ]);
+</script>
+</body>
+</html>

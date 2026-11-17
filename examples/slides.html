@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>TenTen — HTML slides</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;800&family=Hind+Siliguri:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #111; font-family: 'Hind Siliguri', system-ui; }
+  #deck { position: absolute; inset: 0; margin: auto; width: min(100vw, 177.78vh); height: min(56.25vw, 100vh); background: #fff; overflow: hidden; }
+  .slide { position: absolute; inset: 0; padding: 7% 8%; opacity: 0; transition: opacity .4s; }
+  .slide.on { opacity: 1; }
+  h1 { font: 800 clamp(28px, 5vw, 64px)/1.1 'Baloo Da 2'; margin: 0 0 .4em; }
+  p, li { font-size: clamp(16px, 2.2vw, 30px); }
+  .box { display: inline-block; padding: .5em .9em; border-radius: 14px; background: #f4f0ff; font-weight: 600; }
+  .hint { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); color: #aaa; font: 13px system-ui; }
+</style>
+</head>
+<body>
+<!--
+  How it works: put data-tenten="step; step; …" on a slide. When that slide opens, TenTen runs the steps.
+  Steps:  enter | exit | say:text | point:#id|text | think | wow | happy | celebrate | hop | nod | look:left | flyTo:80%,60% | wait:1.5
+  Reveal.js:  Reveal.on('slidechanged', e => runSteps(e.currentSlide.dataset.tenten));
+-->
+<div id="deck">
+  <section class="slide" data-tenten="enter; say:আজকের ক্লাসে স্বাগতম!; happy">
+    <h1>মাইটোকন্ড্রিয়া</h1>
+    <p>কোষের শক্তিঘর</p>
+  </section>
+  <section class="slide" data-tenten="point:#s2q|এই প্রশ্নটা মনে রাখো; think">
+    <h1>প্রশ্ন</h1>
+    <p class="box" id="s2q">ক্রিস্টি কেন ভাঁজ করা থাকে?</p>
+  </section>
+  <section class="slide" data-tenten="flyTo:82%,70%; say:উত্তর: বেশি জায়গায় বেশি এটিপি তৈরি হয়; celebrate">
+    <h1>উত্তর</h1>
+    <ul><li>ভাঁজ = বেশি তল</li><li>বেশি তল = বেশি শ্বসন এনজাইম</li></ul>
+  </section>
+  <section class="slide" data-tenten="say:আবার দেখা হবে!; exit">
+    <h1>ধন্যবাদ</h1>
+  </section>
+</div>
+<div class="hint">← → to change slides · click once to enable sound</div>
+
+<script src="../tenten.bundle.js"></script>
+<script>
+  const tt = TenTen.create({ size: 130, parent: '#deck' });
+  function runSteps(spec) {
+    for (const raw of (spec || '').split(';').map((s) => s.trim()).filter(Boolean)) {
+      const [fn, arg = ''] = raw.split(/:(.*)/s);
+      if (fn === 'say') tt.say(arg);
+      else if (fn === 'point') { const [sel, text] = arg.split('|'); tt.point(sel, text ? { say: text } : {}); }
+      else if (fn === 'flyTo') { const [x, y] = arg.split(','); tt.flyTo({ x, y }); }
+      else if (fn === 'look') tt.look(arg);
+      else if (fn === 'wait') tt.wait(+arg);
+      else if (fn === 'hop') tt.hop(+arg || 1);
+      else if (typeof tt[fn] === 'function') tt[fn]();
+    }
+  }
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = -1;
+  function go(n) {
+    if (n < 0 || n >= slides.length || n === i) return;
+    slides[i]?.classList.remove('on'); i = n; slides[i].classList.add('on');
+    tt.interrupt();
+    if (tt.off && !/enter/.test(slides[i].dataset.tenten || '')) tt.enter();
+    runSteps(slides[i].dataset.tenten);
+  }
+  addEventListener('keydown', (e) => { if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) go(i + 1); if (['ArrowLeft', 'PageUp'].includes(e.key)) go(i - 1); });
+  addEventListener('click', () => go(i + 1));
+  go(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="bn">
+<head><meta charset="utf-8"><title>TenTen — minimal</title>
+<style>body{font:20px system-ui;padding:60px;background:#fff}#q{display:inline-block;padding:16px 22px;border:2px dashed #ccc;border-radius:12px}</style>
+</head>
+<body>
+  <h1>Minimal embed</h1>
+  <p id="q">২ + ৩ × ৪ = ?</p>
+  <p><button onclick="run()">Run TenTen</button></p>
+
+  <!-- 1. include the one file -->
+  <script src="../tenten.bundle.js"></script>
+  <!-- 2. create + script it -->
+  <script>
+    const tt = TenTen.create({ size: 130 });
+    async function run() {
+      await tt.enter();
+      await tt.say('একটা প্রশ্ন দেখাই');
+      await tt.point('#q', { say: 'আগে গুণ, তারপর যোগ!' });
+      await tt.think(1.5);
+      await tt.say('উত্তর ১৪', { mood: 'happy' });
+      await tt.celebrate();
+      await tt.exit();
+    }
+  </script>
+</body>
+</html>

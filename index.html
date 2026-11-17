@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TenTen Kit — floating character for videos, slides & pages</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;800&family=Hind+Siliguri:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --red: #ff1226; --violet: #5035d5; --ink: #1d1b19; --mut: #6b6560; --bg: #faf8f5; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.55 'Hind Siliguri', system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  header { padding: 40px 6vw 10px; }
+  h1 { font: 800 44px/1.1 'Baloo Da 2', system-ui; margin: 0 0 6px; }
+  h1 span { background: linear-gradient(100deg, #ff8b91, var(--red) 45%, var(--violet)); -webkit-background-clip: text; color: transparent; }
+  .lead { color: var(--mut); max-width: 760px; margin: 0; }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 24px 6vw 80px; }
+  @media (max-width: 960px) { main { grid-template-columns: 1fr; } }
+  section { background: #fff; border: 1px solid #ece7e1; border-radius: 18px; padding: 22px 24px; }
+  h2 { font: 800 22px 'Baloo Da 2', system-ui; margin: 0 0 12px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  button { font: 600 14px 'Hind Siliguri', system-ui; border: 1px solid #e3ddd6; background: #fff; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  button:hover { border-color: var(--red); color: var(--red); }
+  button.main { background: var(--red); color: #fff; border-color: var(--red); }
+  .target { display: inline-block; margin: 14px 10px 0 0; padding: 12px 16px; border-radius: 12px; background: #f4f0ff; font-weight: 600; }
+  pre { background: #1d1b19; color: #f5efe6; border-radius: 12px; padding: 14px 16px; overflow: auto; font: 13px/1.55 ui-monospace, Menlo, monospace; margin: 10px 0 0; }
+  code { font: 13px ui-monospace, Menlo, monospace; background: #f3eee8; padding: 1px 5px; border-radius: 5px; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td { border-top: 1px solid #eee; padding: 6px 4px; vertical-align: top; }
+  td:first-child { white-space: nowrap; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+  .files a { color: var(--violet); }
+  .row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+  input[type=text] { flex: 1; font: 15px 'Hind Siliguri'; padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd; }
+  .stills { display: flex; flex-wrap: wrap; gap: 10px; }
+  .stills figure { margin: 0; text-align: center; font-size: 12px; color: var(--mut); }
+  .stills img { width: 92px; height: 92px; object-fit: contain; background: repeating-conic-gradient(#f1ede8 0 25%, #fff 0 50%) 0 0/16px 16px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><span>TenTen</span> Kit</h1>
+  <p class="lead">টেনটেনকে যেকোনো ওয়েব পেজ, HTML স্লাইড বা ভিডিওর উপর ভাসমান চরিত্র হিসেবে বসাও। One JS file, no dependencies. Same character and rules as ReelMath: <b>no mouth, ever</b>; it never vanishes in place (it only flies off-screen); eyes glow while it talks.</p>
+</header>
+<main>
+  <section>
+    <h2>১. Try it</h2>
+    <div class="btns">
+      <button class="main" onclick="tt.enter()">enter()</button>
+      <button onclick="tt.say('হাই! আমি টেনটেন 👋')">say()</button>
+      <button onclick="tt.point('#t1', { say: 'এই অংশটা দেখো' })">point(#t1)</button>
+      <button onclick="tt.point('#t2')">point(#t2)</button>
+      <button onclick="tt.think()">think()</button>
+      <button onclick="tt.wow()">wow()</button>
+      <button onclick="tt.happy()">happy()</button>
+      <button onclick="tt.sleepy()">sleepy()</button>
+      <button onclick="tt.celebrate()">celebrate()</button>
+      <button onclick="tt.hop(2)">hop(2)</button>
+      <button onclick="tt.nod()">nod()</button>
+      <button onclick="tt.shake()">shake()</button>
+      <button onclick="tt.spin()">spin()</button>
+      <button onclick="tt.look('left')">look('left')</button>
+      <button onclick="tt.look('right')">look('right')</button>
+      <button onclick="tt.blink()">blink()</button>
+      <button onclick="tt.followTarget('mouse')">followTarget('mouse')</button>
+      <button onclick="tt.unfollow()">unfollow()</button>
+      <button onclick="tt.exit()">exit()</button>
+      <button onclick="tt.mute(!tt.muted)">mute on/off</button>
+    </div>
+    <div class="row"><input id="txt" type="text" value="চলো আজ মাইটোকন্ড্রিয়া আঁকা শিখি!"><button onclick="tt.say(txt.value)">say this</button></div>
+    <div><span class="target" id="t1">Target #t1</span><span class="target" id="t2">Target #t2</span></div>
+    <pre><code>&lt;script src="tenten.bundle.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  const tt = TenTen.create({ size: 140 });
+  tt.enter();
+  tt.say('হাই! আমি টেনটেন');
+  tt.point('#question', { say: 'এই প্রশ্নটা খেয়াল করো' });
+  tt.celebrate();
+  tt.exit();
+&lt;/script&gt;</code></pre>
+    <p style="font-size:13px;color:var(--mut)">Actions queue in order, and each one returns a Promise, so you can <code>await</code> it. Browsers only play sound after the first click or keypress on the page.</p>
+  </section>
+
+  <section>
+    <h2>২. Where it works</h2>
+    <table>
+      <tr><td>Any web page</td><td>Add <code>tenten.bundle.js</code> and call <code>TenTen.create()</code>. TenTen floats above everything.</td></tr>
+      <tr><td>HTML slides</td><td><a href="examples/slides.html">examples/slides.html</a>: add <code>data-tenten="say:…"</code> on any element and TenTen acts on that slide. Also works with Reveal.js.</td></tr>
+      <tr><td>Over a video (web)</td><td><a href="examples/video-overlay.html">examples/video-overlay.html</a>: <code>tt.sync(video, cues)</code> fires actions at video timestamps and keeps up with seeking.</td></tr>
+      <tr><td>Video editors</td><td>Transparent clips in <code>clips/</code>: <b>.mov</b> (ProRes 4444, Premiere / Final Cut / CapCut / Keynote / PowerPoint), <b>.webm</b> (web), <b>.gif</b> (Google Slides / Canva).</td></tr>
+      <tr><td>Static designs</td><td><code>assets/png/</code> (transparent 512 px) and <code>assets/svg/</code> for every mood.</td></tr>
+      <tr><td>Minimal embed</td><td><a href="examples/minimal.html">examples/minimal.html</a></td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>৩. API</h2>
+    <table>
+      <tr><td>TenTen.create(opts)</td><td>Options: <code>size</code> (140), <code>parent</code> (body, or an element/selector such as a video wrapper), <code>sound</code> (true), <code>volume</code> (0.6), <code>draggable</code>, <code>onClick</code>, <code>start</code> ('offscreen' or {x,y}), <code>side</code> ('right'), <code>clock</code> ('auto' or 'manual' + <code>advance(dt)</code>)</td></tr>
+      <tr><td>enter({from,to}) / exit({to})</td><td>Flies in from the side, or flies off-screen sideways. It never just disappears.</td></tr>
+      <tr><td>flyTo(target)</td><td>The target can be an element, a selector, <code>{x,y}</code> in pixels, or <code>{x:'80%',y:'70%'}</code>. It flies in a low arc.</td></tr>
+      <tr><td>point(target,{say})</td><td>Flies beside the element (on whichever side has room), looks at it and draws a pulsing ring around it.</td></tr>
+      <tr><td>say(text,{dur,mood})</td><td>Shows a speech bubble while the eyes glow. The duration defaults to the length of the text.</td></tr>
+      <tr><td>think · wow · happy · sleepy</td><td>Shows a ? / ! / squint + blush / z mood for the given duration, then goes back to idle.</td></tr>
+      <tr><td>setMood(name,dur)</td><td><code>idle | happy | think | wow | sleepy</code></td></tr>
+      <tr><td>hop · nod · shake · spin · blink · celebrate</td><td>Short gestures. <code>celebrate</code> adds a sparkle burst and a success sound.</td></tr>
+      <tr><td>look(dir) · lookAt(target)</td><td>Moves only the gaze.</td></tr>
+      <tr><td>followTarget(t) · unfollow()</td><td>Follows <code>'mouse'</code> or an element.</td></tr>
+      <tr><td>play(steps)</td><td><code>[['enter'],['say','হাই'],['point','#a'],['exit']]</code></td></tr>
+      <tr><td>sync(video,cues)</td><td><code>[{ t: 2.5, do: ['say','…'] }]</code></td></tr>
+      <tr><td>interrupt()</td><td>Drops everything still queued, for example when the slide changes. TenTen stays where it is.</td></tr>
+      <tr><td>mute(bool) · destroy()</td><td></td></tr>
+    </table>
+  </section>
+
+  <section class="files">
+    <h2>৪. Files (share the whole folder)</h2>
+    <table>
+      <tr><td><a href="tenten.bundle.js">tenten.bundle.js</a></td><td>One file with every sound inlined. <b>Use this one.</b></td></tr>
+      <tr><td><a href="tenten.js">tenten.js</a></td><td>Same code, but loads sounds from <code>assets/sfx/</code> next to it.</td></tr>
+      <tr><td>assets/sfx/*.mp3 · sfx-wav/*.wav</td><td>pop, whoosh, swoosh, blink, peek, chime, ding, success, tick, sting. Made in-house, so free to use.</td></tr>
+      <tr><td>assets/svg · assets/png</td><td>Character stills, one per mood</td></tr>
+      <tr><td>clips/</td><td>Transparent animated clips (mov / webm / gif)</td></tr>
+    </table>
+    <div class="stills" id="stills"></div>
+  </section>
+</main>
+<script src="tenten.bundle.js"></script>
+<script>
+  const tt = TenTen.create({ size: 140, draggable: true });
+  tt.enter().then(() => tt.say('হাই! আমাকে টেনে সরাতে পারো, ক্লিক করলে লাফাই', { dur: 3.2 }));
+  const moods = ['idle', 'happy', 'think', 'wow', 'sleepy', 'talk', 'look-left', 'look-right'];
+  stills.innerHTML = moods.map((m) => `<figure><img src="assets/png/tenten-${m}.png" alt="${m}" onerror="this.parentNode.remove()"><figcaption>${m}</figcaption></figure>`).join('');
+</script>
+</body>
+</html>
