@@ -60,7 +60,7 @@
         <rect x="58" y="72" width="44" height="7" rx="1.5" fill="white" stroke="white" stroke-width="2.2"/>
         <g class="tt-open"><ellipse cx="48" cy="77" rx="13" ry="17"/><ellipse cx="112" cy="77" rx="13" ry="17"/></g>
         <g class="tt-closed" style="opacity:0"><rect x="35" y="70.9" width="90" height="9.2" rx="4.6"/></g>
-        <g class="tt-happy" style="opacity:0"><path d="M35 79 A13 15 0 0 1 61 79 Z"/><path d="M99 79 A13 15 0 0 1 125 79 Z"/></g>
+        <g class="tt-happy" style="opacity:0"><path d="M35 80.1 A13 15 0 0 1 61 80.1 Z"/><path d="M99 80.1 A13 15 0 0 1 125 80.1 Z"/></g><!-- squint bottoms sit on the rod's bottom edge (72 + 7 + 1.1 stroke) -->
       </g>
     </g>
   </g>
