@@ -59,6 +59,7 @@
       <g class="tt-eyes" fill="white">
         <rect x="58" y="72" width="44" height="7" rx="1.5" fill="white" stroke="white" stroke-width="2.2"/>
         <g class="tt-open"><ellipse cx="48" cy="77" rx="13" ry="17"/><ellipse cx="112" cy="77" rx="13" ry="17"/></g>
+        <g class="tt-closed" style="opacity:0"><rect x="35" y="70.9" width="90" height="9.2" rx="4.6"/></g>
         <g class="tt-happy" style="opacity:0"><path d="M35 79 A13 15 0 0 1 61 79 Z"/><path d="M99 79 A13 15 0 0 1 125 79 Z"/></g>
       </g>
     </g>
@@ -107,7 +108,7 @@
       this.el.innerHTML = svgMarkup(id);
       this.layer.appendChild(this.el);
       const q = (s) => this.el.querySelector(s);
-      this.n = { open: q('.tt-open'), happy: q('.tt-happy'), face: q('.tt-face'), blush: q('.tt-blush'), eyes: q('.tt-eyes'), body: q('.tt-bodyg'), svg: q('svg') };
+      this.n = { open: q('.tt-open'), happy: q('.tt-happy'), face: q('.tt-face'), blush: q('.tt-blush'), eyes: q('.tt-eyes'), closed: q('.tt-closed'), body: q('.tt-bodyg'), svg: q('svg') };
       this.lotEl = document.createElement('div');
       Object.assign(this.lotEl.style, { position: 'absolute', pointerEvents: 'none', opacity: 0 });
       this.el.appendChild(this.lotEl); this.lot = null; this.lotK = 0;
@@ -388,10 +389,15 @@
       this.gaze = { x: this.gaze.x + (g.x - this.gaze.x) * gk, y: this.gaze.y + (g.y - this.gaze.y) * gk };
       // eyes
       const sleepy = this.mood === 'sleepy';
-      const blink = (t % 3.9 < 0.12 && !happy) || (t - this.blinkAt >= 0 && t - this.blinkAt < 0.14);
-      const bl = sleepy ? 0.14 : blink ? 0.1 : 1;
-      n.open.setAttribute('transform', `translate(0 ${(77 * (1 - bl)).toFixed(2)}) scale(1 ${bl})`);
-      n.open.style.opacity = happy ? 0 : 1; n.happy.style.opacity = happy ? 1 : 0;
+      // blink: the eyes squash onto the rod's centre line, then close into one bar exactly as thick as the rod
+      // (rod = 7 px + 2.2 px stroke = 9.2 px, centred at y 75.5), so eye-rod-eye reads as one connected line
+      const BW = 0.16, ph = (t % 3.9) < BW ? (t % 3.9) / BW : t - this.blinkAt >= 0 && t - this.blinkAt < BW ? (t - this.blinkAt) / BW : -1;
+      let c = ph < 0 || happy ? 0 : 1 - Math.abs(ph * 2 - 1);      // 0 open → 1 closed → 0 open
+      if (sleepy) c = 1;
+      const shut = c > 0.72, sy = 1 - c * (1 - 9.2 / 34), cy = 77 - 1.5 * c;
+      n.open.setAttribute('transform', `translate(0 ${cy.toFixed(2)}) scale(1 ${sy.toFixed(3)}) translate(0 -77)`);
+      n.open.style.opacity = happy || shut ? 0 : 1; n.closed.style.opacity = !happy && shut ? 1 : 0;
+      n.happy.style.opacity = happy ? 1 : 0;
       n.eyes.setAttribute('transform', this.mood === 'wow' ? 'translate(80 77) scale(1.2) translate(-80 -77)' : '');
       n.face.setAttribute('transform', `translate(${(this.gaze.x * 7).toFixed(1)} ${(this.gaze.y * 6).toFixed(1)})`);
       n.blush.setAttribute('opacity', happy ? 0.9 : 0.25);

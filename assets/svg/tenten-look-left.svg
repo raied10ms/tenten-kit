@@ -1,17 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="320" height="360" viewBox="0 0 160 180" style="overflow: visible; display: block; opacity: 1;" aria-hidden="true">
   <defs>
-    <linearGradient id="ttBody19" x1=".25" y1="0" x2=".8" y2="1"><stop stop-color="#ff8b91"></stop><stop offset=".43" stop-color="#ff1226"></stop><stop offset="1" stop-color="#5035d5"></stop></linearGradient>
-    <radialGradient id="ttShine19" cx=".2" cy=".05" r=".85"><stop stop-color="white" stop-opacity=".85"></stop><stop offset=".65" stop-color="white" stop-opacity="0"></stop></radialGradient>
+    <linearGradient id="ttBody21" x1=".25" y1="0" x2=".8" y2="1"><stop stop-color="#ff8b91"></stop><stop offset=".43" stop-color="#ff1226"></stop><stop offset="1" stop-color="#5035d5"></stop></linearGradient>
+    <radialGradient id="ttShine21" cx=".2" cy=".05" r=".85"><stop stop-color="white" stop-opacity=".85"></stop><stop offset=".65" stop-color="white" stop-opacity="0"></stop></radialGradient>
   </defs>
   <ellipse class="tt-shadow" cx="80" cy="166" rx="40" ry="7" fill="#000" opacity=".18"></ellipse>
   <g class="tt-bodyg" transform="translate(80 145) scale(1.025 0.975) translate(-80 -145)">
-    <path d="M80 14 C126 10 149 33 149 77 C150 126 126 149 81 149 C36 151 12 133 12 86 C10 40 32 15 80 14Z" fill="url(#ttBody19)" stroke="#fff" stroke-width="4"></path>
-    <path d="M80 14 C126 10 149 33 149 77 C150 126 126 149 81 149 C36 151 12 133 12 86 C10 40 32 15 80 14Z" fill="url(#ttShine19)"></path>
+    <path d="M80 14 C126 10 149 33 149 77 C150 126 126 149 81 149 C36 151 12 133 12 86 C10 40 32 15 80 14Z" fill="url(#ttBody21)" stroke="#fff" stroke-width="4"></path>
+    <path d="M80 14 C126 10 149 33 149 77 C150 126 126 149 81 149 C36 151 12 133 12 86 C10 40 32 15 80 14Z" fill="url(#ttShine21)"></path>
     <g class="tt-blush" fill="#ff9fb4" opacity="0.25"><ellipse cx="33" cy="101" rx="11" ry="6"></ellipse><ellipse cx="127" cy="101" rx="11" ry="6"></ellipse></g>
     <g class="tt-face" transform="translate(-7.0 0.0)">
       <g class="tt-eyes" fill="white" transform="" style="filter: none;">
         <rect x="58" y="72" width="44" height="7" rx="1.5" fill="white" stroke="white" stroke-width="2.2"></rect>
-        <g class="tt-open" transform="translate(0 0.00) scale(1 1)" style="opacity: 1;"><ellipse cx="48" cy="77" rx="13" ry="17"></ellipse><ellipse cx="112" cy="77" rx="13" ry="17"></ellipse></g>
+        <g class="tt-open" transform="translate(0 77.00) scale(1 1.000) translate(0 -77)" style="opacity: 1;"><ellipse cx="48" cy="77" rx="13" ry="17"></ellipse><ellipse cx="112" cy="77" rx="13" ry="17"></ellipse></g>
+        <g class="tt-closed" style="opacity: 0;"><rect x="35" y="70.9" width="90" height="9.2" rx="4.6"></rect></g>
         <g class="tt-happy" style="opacity:0"><path d="M35 79 A13 15 0 0 1 61 79 Z"></path><path d="M99 79 A13 15 0 0 1 125 79 Z"></path></g>
       </g>
     </g>
