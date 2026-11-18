@@ -40,6 +40,15 @@
   .copybar { display: flex; gap: 12px; align-items: center; margin: 12px 0 8px; }
   #copied { color: #16a34a; font-weight: 600; }
   #promptText { width: 100%; height: 420px; font: 13px/1.55 ui-monospace, Menlo, monospace; border: 1px solid #e3ddd6; border-radius: 12px; padding: 14px 16px; background: #fdfbf8; resize: vertical; }
+  .gallery { grid-column: 1 / -1; }
+  .lgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+  .lcard { border: 1px solid #ece7e1; border-radius: 14px; padding: 10px; text-align: center; cursor: pointer; background: #fdfbf8; }
+  .lcard:hover { border-color: var(--red); }
+  .lcard .lv { width: 140px; height: 140px; margin: 0 auto; }
+  .lcard b { display: block; font: 600 14px ui-monospace, Menlo, monospace; margin: 4px 0 2px; }
+  .lcard small { color: var(--mut); font-size: 12px; display: block; min-height: 32px; }
+  .lcard .dl { font-size: 12px; margin-top: 4px; }
+  .lcard .dl a { color: var(--violet); margin: 0 3px; }
 </style>
 </head>
 <body>
@@ -70,6 +79,24 @@
       <button onclick="tt.followTarget('mouse')">followTarget('mouse')</button>
       <button onclick="tt.unfollow()">unfollow()</button>
       <button onclick="tt.exit()">exit()</button>
+    </div>
+    <p style="margin:14px 0 6px;font-weight:600">Design-team animations (Lottie): <code>tt.react(name)</code></p>
+    <div class="btns">
+      <button onclick="tt.react('perfect')">react('perfect')</button>
+      <button onclick="tt.react('fire')">react('fire')</button>
+      <button onclick="tt.react('cool')">react('cool')</button>
+      <button onclick="tt.react('heart')">react('heart')</button>
+      <button onclick="tt.react('writing')">react('writing')</button>
+      <button onclick="tt.react('reading')">react('reading')</button>
+      <button onclick="tt.react('love-eye')">react('love-eye')</button>
+      <button onclick="tt.react('cry')">react('cry')</button>
+      <button onclick="tt.react('blink-smile')">react('blink-smile')</button>
+      <button onclick="tt.react('looking-around')">react('looking-around')</button>
+      <button onclick="tt.react('loading')">react('loading')</button>
+      <button onclick="tt.react('blink')">react('blink')</button>
+      <button onclick="tt.cry()">cry()</button>
+      <button onclick="tt.love()">love()</button>
+      <button onclick="tt.loading(2)">loading(2)</button>
       <button onclick="tt.mute(!tt.muted)">mute on/off</button>
     </div>
     <div class="row"><input id="txt" type="text" value="চলো আজ মাইটোকন্ড্রিয়া আঁকা শিখি!"><button onclick="tt.say(txt.value)">say this</button></div>
@@ -94,6 +121,7 @@
       <tr><td>Over a video (web)</td><td><a href="examples/video-overlay.html">examples/video-overlay.html</a>: <code>tt.sync(video, cues)</code> fires actions at video timestamps and keeps up with seeking.</td></tr>
       <tr><td>Video editors</td><td>Transparent clips in <code>clips/</code>: <b>.mov</b> (ProRes 4444, Premiere / Final Cut / CapCut / Keynote / PowerPoint), <b>.webm</b> (web), <b>.gif</b> (Google Slides / Canva).</td></tr>
       <tr><td>Static designs</td><td><code>assets/png/</code> (transparent 512 px) and <code>assets/svg/</code> for every mood.</td></tr>
+      <tr><td>Apps &amp; motion</td><td><a href="#gallery">Section ৬</a>: the design team's Lottie files (<code>assets/lottie/*.json</code>) for lottie-web, Android, iOS or After Effects.</td></tr>
       <tr><td>No coding</td><td><a href="#prompt">Section ৫</a>: a ready-to-copy prompt for ChatGPT, Claude or Gemini</td></tr>
       <tr><td>Minimal embed</td><td><a href="examples/minimal.html">examples/minimal.html</a></td></tr>
     </table>
@@ -110,6 +138,8 @@
       <tr><td>think · wow · happy · sleepy</td><td>Shows a ? / ! / squint + blush / z mood for the given duration, then goes back to idle.</td></tr>
       <tr><td>setMood(name,dur)</td><td><code>idle | happy | think | wow | sleepy</code></td></tr>
       <tr><td>hop · nod · shake · spin · blink · celebrate</td><td>Short gestures. <code>celebrate</code> adds a sparkle burst and a success sound.</td></tr>
+      <tr><td>react(name,{dur,loops,say})</td><td>Plays one of the design team's animations in place of the body. TenTen keeps bobbing and can keep flying. Names: <code>perfect · fire · cool · heart · writing · reading · love-eye · cry · blink-smile · looking-around · loading · blink</code>. The animation player only loads the first time you use one.</td></tr>
+      <tr><td>cry() · love() · loading(dur)</td><td>Shortcuts for <code>react('cry' | 'love-eye' | 'loading')</code></td></tr>
       <tr><td>look(dir) · lookAt(target)</td><td>Moves only the gaze.</td></tr>
       <tr><td>followTarget(t) · unfollow()</td><td>Follows <code>'mouse'</code> or an element.</td></tr>
       <tr><td>play(steps)</td><td><code>[['enter'],['say','হাই'],['point','#a'],['exit']]</code></td></tr>
@@ -129,6 +159,11 @@
       <tr><td>clips/</td><td>Transparent animated clips (mov / webm / gif)</td></tr>
     </table>
     <div class="stills" id="stills"></div>
+  </section>
+  <section class="gallery" id="gallery">
+    <h2>৬. ডিজাইন টিমের অ্যানিমেশন (Lottie)</h2>
+    <p style="margin:0 0 12px;color:var(--mut)">Made by the 10MS design team. Click a card to play it on the live TenTen. You can download each one as a <b>.json</b> (for lottie-web, Android, iOS, After Effects or LottieFiles), a transparent <b>.mov / .webm / .gif</b>, or a <b>.png</b> still.</p>
+    <div class="lgrid" id="lgrid"></div>
   </section>
   <section class="prompt" id="prompt">
     <h2>৫. কোডিং ছাড়াই: ChatGPT / Claude / Gemini-এর জন্য রেডি প্রম্পট</h2>
@@ -153,6 +188,9 @@ HOW TO ADD TENTEN (use exactly this, don't recreate the character yourself):
    tt.flyTo({ x: '80%', y: '70%' })     move to a spot on the screen
    tt.think()  tt.wow()  tt.happy()  tt.sleepy()      moods
    tt.celebrate()  tt.hop(2)  tt.nod()  tt.shake()     gestures
+   tt.react('perfect')                 special animations by our design team:
+       'perfect' (crown, for a correct answer), 'fire' (streak), 'cool' (sunglasses),
+       'heart', 'writing', 'reading', 'love-eye', 'cry' (wrong answer), 'loading' (waiting)
    tt.look('left' | 'right' | 'up')
    tt.exit()                           fly away
    tt.interrupt()                      call this every time the slide changes
@@ -166,7 +204,7 @@ RULES:
 
 DESIGN:
 - Bangla text in the "Hind Siliguri" font (Google Fonts). Clean, colourful, easy for students to read.
-- If it's a lesson: make 16:9 slides that change with the arrow keys and with clicks. Each slide has its own TenTen actions: greet, point at the key term, ask a question (think), react to the answer (happy or celebrate).
+- If it's a lesson: make 16:9 slides that change with the arrow keys and with clicks. Each slide has its own TenTen actions: greet, point at the key term, ask a question (think), react to the answer (react('perfect') for right, react('cry') for wrong).
 - Return the WHOLE file in ONE code block, with nothing left out.
 
 WHAT I WANT:
@@ -182,6 +220,23 @@ MY CONTENT:
   tt.enter().then(() => tt.say('হাই! আমাকে টেনে সরাতে পারো, ক্লিক করলে লাফাই', { dur: 3.2 }));
   const moods = ['idle', 'happy', 'think', 'wow', 'sleepy', 'talk', 'look-left', 'look-right'];
   stills.innerHTML = moods.map((m) => `<figure><img src="assets/png/tenten-${m}.png" alt="${m}" onerror="this.parentNode.remove()"><figcaption>${m}</figcaption></figure>`).join('');
+  const LOTS = [
+    ['perfect', 'একদম পারফেক্ট: crown, confetti'], ['fire', 'on fire / streak'], ['cool', 'sunglasses, cool nod'], ['heart', 'love, floating hearts'],
+    ['writing', 'writing with a pencil'], ['reading', 'reading a book'], ['love-eye', 'heart eyes'], ['cry', 'crying, tear drop'],
+    ['blink-smile', 'happy blink'], ['looking-around', 'looking around'], ['loading', 'loading dots (waiting)'], ['blink', 'eye blink'],
+    ['loading-screen', 'app loading screen (portrait 1080×2400, not for react)'],
+  ];
+  const lg = document.getElementById('lgrid');
+  lg.innerHTML = LOTS.map(([n, d]) => `<div class="lcard" data-n="${n}"><div class="lv" id="lv-${n}"></div><b>${n}</b><small>${d}</small>
+    <div class="dl"><a href="assets/lottie/${n}.json" download onclick="event.stopPropagation()">json</a>${n === 'loading-screen' ? '' : `<a href="clips/tenten-react-${n}.mov" download onclick="event.stopPropagation()">mov</a><a href="clips/tenten-react-${n}.webm" download onclick="event.stopPropagation()">webm</a><a href="clips/tenten-react-${n}.gif" download onclick="event.stopPropagation()">gif</a><a href="assets/png/tenten-react-${n}.png" download onclick="event.stopPropagation()">png</a>`}</div></div>`).join('');
+  lg.addEventListener('click', (e) => { const c = e.target.closest('.lcard'); if (c && c.dataset.n !== 'loading-screen') { tt.interrupt(); if (tt.off) tt.enter(); tt.react(c.dataset.n); } });
+  // previews: load the player + each animation lazily when the gallery scrolls into view
+  new IntersectionObserver(async (es, ob) => {
+    if (!es.some((e) => e.isIntersecting)) return; ob.disconnect();
+    const load = (u) => new Promise((r) => { const s = document.createElement('script'); s.src = u; s.onload = r; document.head.appendChild(s); });
+    if (!window.lottie) await load('assets/lottie/lottie_light.min.js');
+    for (const [n] of LOTS) { if (!TenTen.LOTTIE[n]) await load(`assets/lottie/${n}.js`); lottie.loadAnimation({ container: document.getElementById('lv-' + n), renderer: 'svg', loop: true, autoplay: true, animationData: JSON.parse(JSON.stringify(TenTen.LOTTIE[n])) }); }
+  }).observe(lg);
   function copyPrompt() {
     const t = document.getElementById('promptText');
     const done = () => { copied.textContent = 'কপি হয়েছে ✓ এবার ChatGPT, Claude বা Gemini-তে পেস্ট করো'; setTimeout(() => (copied.textContent = ''), 4000); tt.happy(1.2); };

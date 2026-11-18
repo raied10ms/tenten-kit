@@ -26,6 +26,11 @@ const CLIPS = {
   'exit-right':  { ...WIDE, dur: 1.8, js: `tt.wait(0.3); tt.exit({ to: 'right' });` },
   'exit-left':   { ...WIDE, dur: 1.8, js: `tt.wait(0.3); tt.exit({ to: 'left' });` },
 };
+// design-team Lottie reactions: one seamless loop each (two for very short ones)
+for (const name of ['blink', 'blink-smile', 'cry', 'love-eye', 'looking-around', 'loading', 'perfect', 'fire', 'cool', 'heart', 'writing', 'reading']) {
+  const d = JSON.parse(fs.readFileSync(path.join(root, 'assets/lottie', name + '.json'), 'utf8')), len = (d.op - d.ip) / d.fr;
+  CLIPS['react-' + name] = { ...SQ, dur: +(len < 2 ? len * 2 : len).toFixed(3), js: `tt.react('${name}', { dur: 999, sound: 'none' });`, lottie: true, len };
+}
 const STILLS = { idle: ``, happy: `tt.happy(99);`, think: `tt.think(99);`, wow: `tt.wow(99);`, sleepy: `tt.sleepy(99);`, talk: `tt.talkUntil = 1e9;`,
   'look-left': `tt.look('left');`, 'look-right': `tt.look('right');` };
 
@@ -55,12 +60,13 @@ for (const [name, c] of Object.entries(CLIPS)) {
   if (only.length && !only.includes(name)) continue;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'tt-'));
   await setup(c, c.js);
+  if (c.lottie) await page.waitForFunction(() => tt.lot, null, { timeout: 20000 });
   const n = Math.round(c.dur * FPS);
   for (let i = 0; i < n; i++) {
     await step();
     await page.screenshot({ path: path.join(tmp, String(i).padStart(4, '0') + '.png'), omitBackground: true, clip: { x: 0, y: 0, width: c.w, height: c.h } });
   }
-  const snd = await page.evaluate(() => window.SND);
+  const snd = (await page.evaluate(() => window.SND)).filter(([s]) => fs.existsSync(path.join(root, 'assets/sfx-wav', s + '.wav')));
   const base = path.join(root, 'clips', 'tenten-' + name), frames = path.join(tmp, '%04d.png');
   // audio track from the recorded sfx (the same wavs that ship in assets/sfx-wav)
   const aIn = [], aF = [];
@@ -82,6 +88,12 @@ if (!only.length || only.includes('stills')) {
     await page.screenshot({ path: path.join(root, 'assets/png', `tenten-${name}.png`), omitBackground: true, clip: { x: 0, y: 0, width: 512, height: 512 } });
     const svg = await page.evaluate(() => tt.el.querySelector('svg').outerHTML.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="360" '));
     fs.writeFileSync(path.join(root, 'assets/svg', `tenten-${name}.svg`), svg.replace(/width="100%" height="100%" /, ''));
+  }
+  for (const [name, c] of Object.entries(CLIPS).filter(([, c]) => c.lottie)) {   // reaction stills at mid-loop
+    await setup({ w: 512, h: 512, size: 280, at: [256, 300] }, c.js);
+    await page.waitForFunction(() => tt.lot, null, { timeout: 20000 });
+    await page.evaluate((k) => { tt.lot.t0 = 0; tt.t = k; tt.blinkAt = -9; tt.lotK = 1; tt.advance(0); }, c.len * 0.5);
+    await page.screenshot({ path: path.join(root, 'assets/png', `tenten-${name}.png`), omitBackground: true, clip: { x: 0, y: 0, width: 512, height: 512 } });
   }
   console.log('stills done');
 }

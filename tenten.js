@@ -18,6 +18,19 @@
   'use strict';
   const BODY = 'M80 14 C126 10 149 33 149 77 C150 126 126 149 81 149 C36 151 12 133 12 86 C10 40 32 15 80 14Z';
   const SFX = ['pop', 'whoosh', 'swoosh', 'blink', 'peek', 'chime', 'ding', 'success', 'tick', 'sting'];
+  // Lottie animations by the 10MS design team (assets/lottie/). fit = blob width / canvas width, sfx = sound on start.
+  const REACTS = {   // w = body width / canvas, cx, cy = body centre / canvas (measured on frame 0)
+    blink: { w: 0.507, cx: 0.5, cy: 0.473, sfx: 'blink' }, 'blink-smile': { w: 0.507, cx: 0.5, cy: 0.473, sfx: 'chime' },
+    cry: { w: 0.543, cx: 0.498, cy: 0.498, sfx: 'blink' }, 'love-eye': { w: 0.42, cx: 0.495, cy: 0.61, sfx: 'chime' },
+    'looking-around': { w: 0.507, cx: 0.5, cy: 0.473, sfx: 'peek' }, loading: { w: 0.507, cx: 0.5, cy: 0.473, sfx: 'tick' },
+    perfect: { w: 0.57, cx: 0.49, cy: 0.64, sfx: 'success' }, fire: { w: 0.52, cx: 0.49, cy: 0.62, sfx: 'whoosh' },
+    cool: { w: 0.55, cx: 0.5, cy: 0.6, sfx: 'ding' }, heart: { w: 0.533, cx: 0.48, cy: 0.547, sfx: 'chime' },
+    writing: { w: 0.527, cx: 0.48, cy: 0.467, sfx: 'tick' }, reading: { w: 0.52, cx: 0.505, cy: 0.44, sfx: 'peek' },
+  };
+  const loaded = {};
+  const loadScript = (url) => loaded[url] || (loaded[url] = new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = url; s.onload = res; s.onerror = () => rej(new Error('[TenTen] could not load ' + url)); document.head.appendChild(s);
+  }));
   const MOODS = ['idle', 'happy', 'think', 'wow', 'sleepy', 'talk'];
   const E = {
     linear: (t) => t,
@@ -94,7 +107,10 @@
       this.el.innerHTML = svgMarkup(id);
       this.layer.appendChild(this.el);
       const q = (s) => this.el.querySelector(s);
-      this.n = { open: q('.tt-open'), happy: q('.tt-happy'), face: q('.tt-face'), blush: q('.tt-blush'), eyes: q('.tt-eyes'), body: q('.tt-bodyg') };
+      this.n = { open: q('.tt-open'), happy: q('.tt-happy'), face: q('.tt-face'), blush: q('.tt-blush'), eyes: q('.tt-eyes'), body: q('.tt-bodyg'), svg: q('svg') };
+      this.lotEl = document.createElement('div');
+      Object.assign(this.lotEl.style, { position: 'absolute', pointerEvents: 'none', opacity: 0 });
+      this.el.appendChild(this.lotEl); this.lot = null; this.lotK = 0;
       this.sayEl = document.createElement('div'); this.sayEl.className = 'tt-say';
       this.sayEl.style.fontSize = Math.max(15, S * 0.15) + 'px';
       this.sayEl.style.setProperty('--tt-maxw', S * 2.6 + 'px');
@@ -282,6 +298,36 @@
         this.sparks.push({ el, a, v, t0: this.t, d: 0.9 + (i % 4) * 0.12, x: this.p.x, y: this.p.y });
       }
     }
+    // play one of the design team's Lottie animations in place of the body (it keeps bobbing / flying), then hand back
+    async lottieData(name) {
+      if (!REACTS[name] && name !== 'loading-screen') throw new Error('[TenTen] unknown reaction: ' + name + ' (try: ' + Object.keys(REACTS).join(', ') + ')');
+      const base = this.o.assets + 'lottie/';
+      if (!root.lottie) await loadScript(base + 'lottie_light.min.js');
+      if (!(api.LOTTIE || {})[name]) await loadScript(base + name + '.js');
+      return api.LOTTIE[name];
+    }
+    react(name, o = {}) {
+      return this.queue(async () => {
+        const data = await this.lottieData(name), cfg = REACTS[name];
+        const fr = data.fr, frames = data.op - data.ip, len = frames / fr;
+        const d = o.dur ?? len * (o.loops ?? (len < 2 ? 2 : 1));
+        const L = (this.W * 0.815) / cfg.w;   // match our body width (measured: 0.815 → same pixel width as the SVG body), centred at (50.3%, 45.3%)
+        Object.assign(this.lotEl.style, { width: L + 'px', height: L + 'px', left: this.W * 0.503 - cfg.cx * L + 'px', top: this.H * 0.453 - cfg.cy * L + 'px' });
+        this.lotEl.innerHTML = '';
+        const anim = root.lottie.loadAnimation({ container: this.lotEl, renderer: 'svg', loop: false, autoplay: false, animationData: JSON.parse(JSON.stringify(data)) });
+        this.lot = { anim, t0: this.t, fr, frames, ip: data.ip };
+        this.sfx(o.sound ?? cfg.sfx, 0.55);
+        if (o.say) { this.sayEl.textContent = o.say; this.sayOn = true; this.talkUntil = this.t + d; }
+        await this.sleep(d);
+        if (o.say) this.hideSay();
+        this.lot = null;
+        await this.sleep(0.18);
+        if (!this.lot) { anim.destroy(); this.lotEl.innerHTML = ''; }
+      });
+    }
+    cry(dur) { return this.react('cry', { dur }); }
+    love(dur) { return this.react('love-eye', { dur }); }
+    loading(dur = 2) { return this.react('loading', { dur }); }
     wait(s) { return this.queue(() => this.sleep(s)); }
     // follow an element or the mouse ('mouse'); stop with unfollow()
     followTarget(target = 'mouse') {
@@ -371,6 +417,11 @@
       const iw = this.iconEl.offsetWidth || 30;
       this.iconEl.style.transform = `translate(${(x + this.W * 0.38 - iw / 2).toFixed(1)}px,${(y - this.H * 0.62 - iw + Math.sin(t * 3) * 6).toFixed(1)}px) scale(${(0.5 + 0.5 * this.iconK).toFixed(3)})`;
       this.iconEl.style.opacity = this.iconK.toFixed(3);
+      // design-team Lottie: frame comes from TenTen's own clock, body cross-fades
+      this.lotK += ((this.lot ? 1 : 0) - this.lotK) * (dt ? 1 - Math.exp(-dt * 22) : 1);
+      if (this.lot) { const f = ((t - this.lot.t0) * this.lot.fr) % this.lot.frames; this.lot.anim.goToAndStop(this.lot.ip + f, true); }
+      this.lotEl.style.opacity = this.lotK.toFixed(3);
+      n.svg.style.opacity = (1 - this.lotK).toFixed(3);
       // sparks
       this.sparks = this.sparks.filter((s) => {
         const k = (t - s.t0) / s.d;
@@ -386,8 +437,10 @@
   const api = {
     create: (o) => new Tenten(o),
     svg: () => svgMarkup('S'),
-    MOODS, SFX, version: '1.0.0',
+    MOODS, SFX, version: '1.1.0',
     EMBED: (root.TenTen && root.TenTen.EMBED) || null,
+    LOTTIE: (root.TenTen && root.TenTen.LOTTIE) || {},
+    REACTIONS: Object.keys(REACTS),
   };
   root.TenTen = api;
 })(typeof window !== 'undefined' ? window : globalThis);

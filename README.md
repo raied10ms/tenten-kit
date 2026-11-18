@@ -56,6 +56,14 @@ Stills: `assets/png/tenten-<mood>.png` (512 px, transparent) and `assets/svg/ten
 
 Sounds: `assets/sfx/*.mp3` (web) and `assets/sfx-wav/*.wav` (editors): pop, whoosh, swoosh, blink, peek, chime, ding, success, tick, sting. They're synthesised in-house (ReelMath `make-sfx.mjs`), so they're free to use anywhere.
 
+## 2b. Design-team animations (Lottie)
+
+`assets/lottie/` holds the 10MS design team's Lottie files (`<name>.json`, plus `<name>.js` wrappers so they load even when the page is opened as a file). The original brief is in `DESIGN-README.txt`.
+- **Live character:** `tt.react('perfect')` swaps the body for the animation, at the same size and position, and then hands back. `lottie_light.min.js` and the animation's JSON load only the first time they're used.
+- **Video, slides and static designs:** each one has transparent `clips/tenten-react-<name>.{mov,webm,gif}` and `assets/png/tenten-react-<name>.png`.
+- **Apps:** use the `.json` directly with lottie-web, lottie-android or lottie-ios.
+- **Fixes we made to the design export:** `cry` had its body layer set as a track matte, so the body never drew; its tear image was also masked away. Both are fixed in our copy. `loading-screen` is the app's portrait loading screen; it's included as a file, not as a reaction.
+
 ## 3. API
 
 | Call | Does |
@@ -67,6 +75,8 @@ Sounds: `assets/sfx/*.mp3` (web) and `assets/sfx-wav/*.wav` (editors): pop, whoo
 | `say(text, {dur, mood})` | speech bubble + glowing eyes |
 | `think` · `wow` · `happy` · `sleepy` · `setMood(name, dur)` | moods |
 | `hop` · `nod` · `shake` · `spin` · `blink` · `celebrate` | gestures |
+| `react(name, {dur, loops, say})` | plays a design-team Lottie in place of the body: `perfect fire cool heart writing reading love-eye cry blink-smile looking-around loading blink` |
+| `cry()` · `love()` · `loading(dur)` | shortcuts |
 | `look(dir)` · `lookAt(target)` | moves the gaze only |
 | `followTarget('mouse' or el)` · `unfollow()` | follow mode |
 | `play([['enter'], ['say','হাই'], …])` | runs a scripted sequence |
